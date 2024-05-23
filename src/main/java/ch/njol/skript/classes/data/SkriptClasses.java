@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.SkriptCommand;
+import ch.njol.skript.config.Config;
 import ch.njol.skript.expressions.ExprScripts;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -696,6 +697,40 @@ public class SkriptClasses {
 				.since("2.5")
 				.serializer(new YggdrasilSerializer<GameruleValue>())
 		);
+
+		Classes.registerClass(new ClassInfo<>(Config.class, "config")
+			.user("configs?")
+			.name("Config")
+			.description("A configuration (or code) loaded by Skript, such as the config.sk or aliases.",
+				"Configs can be reloaded or navigated to find options.")
+			.usage("")
+			.examples("the skript config")
+			.since("INSERT VERSION")
+			.parser(new Parser<Config>() {
+
+				@Override
+				public boolean canParse(ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @Nullable Config parse(String name, ParseContext context) {
+					return null;
+				}
+
+				@Override
+				public String toString(Config config, int flags) {
+					return this.toVariableNameString(config);
+				}
+
+				@Override
+				public String toVariableNameString(Config config) {
+					@Nullable File file = config.getFile();
+					if (file == null)
+						return config.getFileName();
+					return ExprScripts.FOLDER_PATH.relativize(file.toPath().toAbsolutePath()).toString();
+				}
+			}));
 
 		Classes.registerClass(new ClassInfo<>(Script.class, "script")
 				.user("scripts?")
