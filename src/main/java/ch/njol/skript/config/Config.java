@@ -36,6 +36,7 @@ import java.util.HashMap;
 
 import ch.njol.skript.log.SkriptLogger;
 import org.jetbrains.annotations.ApiStatus;
+import org.skriptlang.skript.util.Validated;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,7 +45,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Peter Güttinger
  */
-public class Config implements Comparable<Config> {
+public class Config implements Comparable<Config>, Validated {
 
 	boolean simple;
 
@@ -71,6 +72,7 @@ public class Config implements Comparable<Config> {
 	String fileName;
 	@Nullable
 	Path file = null;
+	private final Validated validator = Validated.validator();
 
 	public Config(final InputStream source, final String fileName, @Nullable final File file, final boolean simple, final boolean allowEmptySections, final String defaultSeparator) throws IOException {
 		try {
@@ -333,6 +335,16 @@ public class Config implements Comparable<Config> {
 		if (other == null)
 			return 0;
 		return fileName.compareTo(other.fileName);
+	}
+
+	@Override
+	public void invalidate() throws UnsupportedOperationException {
+		this.validator.invalidate();
+	}
+
+	@Override
+	public boolean valid() {
+		return validator.valid();
 	}
 
 }
