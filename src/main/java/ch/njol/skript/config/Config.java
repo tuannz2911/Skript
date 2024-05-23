@@ -30,14 +30,16 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import ch.njol.skript.log.SkriptLogger;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.skriptlang.skript.util.Validated;
 
 /**
@@ -45,7 +47,7 @@ import org.skriptlang.skript.util.Validated;
  *
  * @author Peter Güttinger
  */
-public class Config implements Comparable<Config>, Validated {
+public class Config implements Comparable<Config>, Validated, NodeNavigator {
 
 	boolean simple;
 
@@ -170,17 +172,14 @@ public class Config implements Comparable<Config>, Validated {
 	/**
 	 * Saves the config to a file.
 	 *
-	 * @param f The file to save to
+	 * @param file The file to save to
 	 * @throws IOException If the file could not be written to.
 	 */
-	public void save(final File f) throws IOException {
-		separator = defaultSeparator;
-		final PrintWriter w = new PrintWriter(f, "UTF-8");
-		try {
-			main.save(w);
-		} finally {
-			w.flush();
-			w.close();
+	public void save(File file) throws IOException {
+		this.separator = defaultSeparator;
+		try (final PrintWriter writer = new PrintWriter(file, StandardCharsets.UTF_8)) {
+			this.main.save(writer);
+			writer.flush();
 		}
 	}
 
@@ -304,7 +303,7 @@ public class Config implements Comparable<Config>, Validated {
 				try {
 					if (OptionSection.class.isAssignableFrom(field.getType())) {
 						final OptionSection section = (OptionSection) field.get(object);
-						@NonNull final Class<?> pc = section.getClass();
+						@NotNull final Class<?> pc = section.getClass();
 						load(pc, section, path + section.key + ".");
 					} else if (Option.class.isAssignableFrom(field.getType())) {
 						((Option<?>) field.get(object)).set(this, path);
@@ -345,6 +344,27 @@ public class Config implements Comparable<Config>, Validated {
 	@Override
 	public boolean valid() {
 		return validator.valid();
+	}
+
+	@Override
+	public @NotNull Node getCurrentNode() {
+		return main;
+	}
+
+	@Override
+	public @Nullable Node getNodeAt(@NotNull String @NotNull ... steps) {
+		return main.getNodeAt(steps);
+	}
+
+	@NotNull
+	@Override
+	public Iterator<Node> iterator() {
+		return main.iterator();
+	}
+
+	@Override
+	public @Nullable Node get(String step) {
+		return main.get(step);
 	}
 
 }
