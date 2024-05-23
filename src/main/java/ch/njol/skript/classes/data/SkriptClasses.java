@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.SkriptCommand;
 import ch.njol.skript.config.Config;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.expressions.ExprScripts;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -730,6 +731,38 @@ public class SkriptClasses {
 						return config.getFileName();
 					return ExprScripts.FOLDER_PATH.relativize(file.toPath().toAbsolutePath()).toString();
 				}
+			}));
+
+		Classes.registerClass(new ClassInfo<>(Node.class, "node")
+			.user("nodes?")
+			.name("Node")
+			.description("A node (entry) from a script config file.",
+				"This may have navigable children.")
+			.usage("")
+			.examples("the current script")
+			.since("INSERT VERSION")
+			.parser(new Parser<Node>() {
+
+				@Override
+				public boolean canParse(ParseContext context) {
+					return false;
+				}
+
+				@Override
+				public @Nullable Node parse(String name, ParseContext context) {
+					return null;
+				}
+
+				@Override
+				public String toString(Node node, int flags) {
+					return this.toVariableNameString(node);
+				}
+
+				@Override
+				public String toVariableNameString(Node node) {
+					return node.getPath();
+				}
+
 			}));
 
 		Classes.registerClass(new ClassInfo<>(Script.class, "script")
