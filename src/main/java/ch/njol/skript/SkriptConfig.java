@@ -349,7 +349,7 @@ public class SkriptConfig {
 	}
 
 	// also used for reloading
-	static boolean load() {
+	public static boolean load() {
 		if (mainConfig != null)
 			mainConfig.invalidate(); // todo
 		try {

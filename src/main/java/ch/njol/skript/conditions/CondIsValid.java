@@ -29,16 +29,16 @@ import org.skriptlang.skript.util.Validated;
 
 @Name("Is Valid")
 @Description({
-	"Checks whether something (an entity, a script) is valid.",
+	"Checks whether something (an entity, a script, a config) is valid.",
 	"An invalid entity may have died or de-spawned for some other reason.",
 	"An invalid script reference may have been reloaded, moved or disabled since."
 })
 @Examples("if event-entity is valid")
-@Since("2.7, INSERT VERSION (Scripts)")
+@Since("2.7, INSERT VERSION (Configs)")
 public class CondIsValid extends PropertyCondition<Object> {
 
 	static {
-		register(CondIsValid.class, "valid", "entities/scripts");
+		register(CondIsValid.class, "valid", "entities/scripts/configs/nodes");
 	}
 
 	@Override
