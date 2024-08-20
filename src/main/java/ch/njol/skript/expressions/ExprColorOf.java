@@ -28,13 +28,11 @@ import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Colorable;
 import org.bukkit.material.MaterialData;
-import org.eclipse.jdt.annotation.Nullable;
 
 import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.classes.Changer.ChangeMode;
@@ -49,12 +47,20 @@ import ch.njol.skript.util.Color;
 import ch.njol.skript.util.SkriptColor;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
+import org.jetbrains.annotations.Nullable;
 
 @Name("Color of")
-@Description("The <a href='./classes.html#color'>color</a> of an item, can also be used to color chat messages with \"&lt;%color of ...%&gt;this text is colored!\".")
-@Examples({"on click on wool:",
-		"	message \"This wool block is <%color of block%>%color of block%<reset>!\"",
-		"	set the color of the block to black"})
+@Description({
+	"The <a href='./classes.html#color'>color</a> of an item, can also be used to color chat messages with \"&lt;%color of ...%&gt;this text is colored!\".",
+	"Also the bar color of a boss bar."
+})
+@Examples({
+	"on click on wool:",
+		"\tmessage \"This wool block is <%color of block%>%color of block%<reset>!\"",
+		"\tset the color of the block to black",
+	"set {bar} to a new boss bar",
+	"set the color of {bar} to red"
+})
 @Since("1.2")
 public class ExprColorOf extends PropertyExpression<Object, Color> {
 
@@ -62,14 +68,12 @@ public class ExprColorOf extends PropertyExpression<Object, Color> {
 		register(ExprColorOf.class, Color.class, "colo[u]r[s]", "blocks/itemtypes/entities/fireworkeffects/bossbars");
 	}
 
-	@SuppressWarnings("null")
 	@Override
 	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
 		setExpr(exprs[0]);
 		return true;
 	}
 
-	@SuppressWarnings("null")
 	@Override
 	protected Color[] get(Event e, Object[] source) {
 		if (source instanceof FireworkEffect[]) {
@@ -103,13 +107,12 @@ public class ExprColorOf extends PropertyExpression<Object, Color> {
 	}
 
 	@Override
-	public String toString(@Nullable Event e, boolean debug) {
+	public String toString(@Nullable Event event, boolean debug) {
 		return "color of " + getExpr().toString(e, debug);
 	}
 
 	@Override
-	@Nullable
-	public Class<?>[] acceptChange(ChangeMode mode) {
+	public Class<?> @Nullable [] acceptChange(ChangeMode mode) {
 		Class<?> returnType = getExpr().getReturnType();
 
 		if (FireworkEffect.class.isAssignableFrom(returnType))
@@ -120,7 +123,6 @@ public class ExprColorOf extends PropertyExpression<Object, Color> {
 		return null;
 	}
 
-	@SuppressWarnings("deprecated")
 	@Override
 	public void change(Event e, @Nullable Object[] delta, ChangeMode mode) {
 
@@ -191,7 +193,6 @@ public class ExprColorOf extends PropertyExpression<Object, Color> {
 		}
 	}
 
-	@SuppressWarnings("deprecated")
 	@Nullable
 	private Colorable getColorable(Object colorable) {
 		if (colorable instanceof BossBar bar) {

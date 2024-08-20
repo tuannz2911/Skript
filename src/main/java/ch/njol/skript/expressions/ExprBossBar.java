@@ -39,7 +39,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Boss Bar")
-@Description("")
+@Description("""
+	A new boss bar.
+	Boss bars have several properties (a title/name, a color, a style, visibility and flags).
+	For players to see the boss bar they must be added to it. Players may be added to multiple boss bars at a time.""")
 @Examples({
 	"set {bar} to a new boss bar",
 	"set the name of {bar} to \"hello\"",
@@ -52,8 +55,8 @@ public class ExprBossBar extends SimpleExpression<BossBar> {
 
 	static {
 		Skript.registerExpression(ExprBossBar.class, BossBar.class, ExpressionType.SIMPLE,
-			"[a] new boss[ ]bar [name:(named|titled|with title) %-string%]",
-			"[a] new %color% boss[ ]bar [name:(named|titled|with title) %-string%]"
+			"[a] new boss[ ]bar [(named|with name|titled|with title) %-string%]",
+			"[a] new %color% boss[ ]bar [(named|with name|titled|with title) %-string%]"
 		);
 	}
 
@@ -62,9 +65,8 @@ public class ExprBossBar extends SimpleExpression<BossBar> {
 
 	@Override
 	public boolean init(Expression<?>[] expressions, int pattern, Kleenean delayed, final ParseResult result) {
-		if (result.hasTag("name"))
-			//noinspection unchecked
-			this.name = (Expression<String>) expressions[pattern];
+		//noinspection unchecked
+		this.name = (Expression<String>) expressions[pattern];
 		if (pattern == 1)
 			//noinspection unchecked
 			this.color = (Expression<Color>) expressions[0];
@@ -75,15 +77,11 @@ public class ExprBossBar extends SimpleExpression<BossBar> {
 	protected BossBar[] get(Event event) {
 		@NotNull BossBar bar;
 		BarColor color = BarColor.PINK;
-		color:
 		if (this.color != null) {
-			@Nullable Color provided = this.color.getSingle(event);
-			if (provided == null)
-				break color;
-			@Nullable DyeColor dye = provided.asDyeColor();
-			if (dye == null)
-				break color;
-			color = getColor(dye);
+			color = getColor(this.color
+					.getOptionalSingle(event)
+					.map(Color::asDyeColor)
+					.orElse(DyeColor.PINK));
 		}
 		if (name != null) {
 			bar = Bukkit.createBossBar(name.getSingle(event), color, BarStyle.SOLID);
