@@ -52,8 +52,8 @@ public class ExprBossBar extends SimpleExpression<BossBar> {
 
 	static {
 		Skript.registerExpression(ExprBossBar.class, BossBar.class, ExpressionType.SIMPLE,
-			"[a] new boss bar [name:(named|titled|with title) %-string%]",
-			"[a] new %color% boss bar [name:(named|titled|with title) %-string%]"
+			"[a] new boss[ ]bar [name:(named|titled|with title) %-string%]",
+			"[a] new %color% boss[ ]bar [name:(named|titled|with title) %-string%]"
 		);
 	}
 
