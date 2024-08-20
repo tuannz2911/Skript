@@ -19,9 +19,11 @@
 package ch.njol.skript.expressions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ch.njol.skript.Skript;
+import org.bukkit.boss.BossBar;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.block.Block;
@@ -57,29 +59,29 @@ import ch.njol.util.coll.CollectionUtils;
 public class ExprColorOf extends PropertyExpression<Object, Color> {
 
 	static {
-		register(ExprColorOf.class, Color.class, "colo[u]r[s]", "blocks/itemtypes/entities/fireworkeffects");
+		register(ExprColorOf.class, Color.class, "colo[u]r[s]", "blocks/itemtypes/entities/fireworkeffects/bossbars");
 	}
-	
+
 	@SuppressWarnings("null")
 	@Override
 	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
 		setExpr(exprs[0]);
 		return true;
 	}
-	
+
 	@SuppressWarnings("null")
 	@Override
 	protected Color[] get(Event e, Object[] source) {
 		if (source instanceof FireworkEffect[]) {
 			List<Color> colors = new ArrayList<>();
-			
+
 			for (FireworkEffect effect : (FireworkEffect[]) source) {
 				effect.getColors().stream()
 					.map(SkriptColor::fromBukkitColor)
 					.forEach(colors::add);
 			}
-			
-			if (colors.size() == 0)
+
+			if (colors.isEmpty())
 				return null;
 			return colors.toArray(new Color[0]);
 		}
@@ -120,6 +122,8 @@ public class ExprColorOf extends PropertyExpression<Object, Color> {
 			return CollectionUtils.array(Color.class);
 		else if (Block.class.isAssignableFrom(returnType))
 			return CollectionUtils.array(Color.class);
+		else if (BossBar.class.isAssignableFrom(returnType))
+			return CollectionUtils.array(Color.class);
 		if (ItemType.class.isAssignableFrom(returnType))
 			return CollectionUtils.array(Color.class);
 		return null;
@@ -149,7 +153,7 @@ public class ExprColorOf extends PropertyExpression<Object, Color> {
 
 				if (o instanceof Item)
 					((Item) o).setItemStack(stack);
-			} else if (o instanceof Block || o instanceof Colorable) {
+			} else if (o instanceof Block || o instanceof BossBar || o instanceof Colorable) {
 				Colorable colorable = getColorable(o);
 
 				if (colorable != null) {
@@ -194,6 +198,19 @@ public class ExprColorOf extends PropertyExpression<Object, Color> {
 	@SuppressWarnings("deprecated")
 	@Nullable
 	private Colorable getColorable(Object colorable) {
+		if (colorable instanceof BossBar bar) {
+			return new Colorable() {
+				@Override
+				public DyeColor getColor() {
+					return ExprBossBar.getDye(bar.getColor());
+				}
+
+				@Override
+				public void setColor(DyeColor color) {
+					bar.setColor(ExprBossBar.getColor(color));
+				}
+			};
+		}
 		if (colorable instanceof Item || colorable instanceof ItemType) {
 			ItemStack item = colorable instanceof Item ?
 					((Item) colorable).getItemStack() : ((ItemType) colorable).getRandom();
