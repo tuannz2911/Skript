@@ -108,7 +108,7 @@ public class ExprColorOf extends PropertyExpression<Object, Color> {
 
 	@Override
 	public String toString(@Nullable Event event, boolean debug) {
-		return "color of " + getExpr().toString(e, debug);
+		return "color of " + getExpr().toString(event, debug);
 	}
 
 	@Override
