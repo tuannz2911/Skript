@@ -2354,6 +2354,9 @@ types:
 	quitreason: quit reason¦s @a
 	inventoryclosereason: inventory close reason¦s @an
 	transformreason: transform reason¦s @a
+	bossbar: boss bar¦s @a
+	bossbarstyle: boss bar style¦s @a
+	bossbarflag: boss bar flag¦s @a
 
 	# Skript
 	weathertype: weather type¦s @a

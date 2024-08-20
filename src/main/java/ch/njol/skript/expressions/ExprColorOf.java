@@ -115,16 +115,7 @@ public class ExprColorOf extends PropertyExpression<Object, Color> {
 		if (FireworkEffect.class.isAssignableFrom(returnType))
 			return CollectionUtils.array(Color[].class);
 
-		if (mode != ChangeMode.SET && !getExpr().isSingle())
-			return null;
-
-		if (Entity.class.isAssignableFrom(returnType))
-			return CollectionUtils.array(Color.class);
-		else if (Block.class.isAssignableFrom(returnType))
-			return CollectionUtils.array(Color.class);
-		else if (BossBar.class.isAssignableFrom(returnType))
-			return CollectionUtils.array(Color.class);
-		if (ItemType.class.isAssignableFrom(returnType))
+		if (mode == ChangeMode.SET)
 			return CollectionUtils.array(Color.class);
 		return null;
 	}
@@ -132,13 +123,13 @@ public class ExprColorOf extends PropertyExpression<Object, Color> {
 	@SuppressWarnings("deprecated")
 	@Override
 	public void change(Event e, @Nullable Object[] delta, ChangeMode mode) {
-		if (delta == null)
-			return;
-		DyeColor color = ((Color) delta[0]).asDyeColor();
 
-		for (Object o : getExpr().getArray(e)) {
-			if (o instanceof Item || o instanceof ItemType) {
-				ItemStack stack = o instanceof Item ? ((Item) o).getItemStack() : ((ItemType) o).getRandom();
+		for (Object object : this.getExpr().getArray(e)) {
+			if (object instanceof Item || object instanceof ItemType) {
+				if (delta == null || delta.length < 1)
+					continue;
+				DyeColor color = ((Color) delta[0]).asDyeColor();
+				ItemStack stack = object instanceof Item ? ((Item) object).getItemStack() : ((ItemType) object).getRandom();
 
 				if (stack == null)
 					continue;
@@ -151,10 +142,13 @@ public class ExprColorOf extends PropertyExpression<Object, Color> {
 				((Colorable) data).setColor(color);
 				stack.setData(data);
 
-				if (o instanceof Item)
-					((Item) o).setItemStack(stack);
-			} else if (o instanceof Block || o instanceof BossBar || o instanceof Colorable) {
-				Colorable colorable = getColorable(o);
+				if (object instanceof Item)
+					((Item) object).setItemStack(stack);
+			} else if (object instanceof Block || object instanceof BossBar || object instanceof Colorable) {
+				if (delta == null || delta.length < 1)
+					continue;
+				DyeColor color = ((Color) delta[0]).asDyeColor();
+				Colorable colorable = getColorable(object);
 
 				if (colorable != null) {
 					try {
@@ -166,9 +160,11 @@ public class ExprColorOf extends PropertyExpression<Object, Color> {
 							"Instead, set the block to right material, such as a blue bed."); // Let's just assume it's a bed
 					}
 				}
-			} else if (o instanceof FireworkEffect) {
-				Color[] input = (Color[]) delta;
-				FireworkEffect effect = ((FireworkEffect) o);
+			} else if (object instanceof FireworkEffect) {
+				Color[] input = delta instanceof Color[]
+					? (Color[]) delta
+					: Arrays.copyOf(delta, delta.length, Color[].class);
+				FireworkEffect effect = ((FireworkEffect) object);
 				switch (mode) {
 					case ADD:
 						for (Color c : input)
