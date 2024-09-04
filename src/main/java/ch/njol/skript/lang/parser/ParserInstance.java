@@ -430,7 +430,7 @@ public final class ParserInstance implements Experimented {
 	@ApiStatus.Internal
 	public void addExperiment(Experiment experiment) {
 		Script script = this.getCurrentScript();
-		ExperimentSet set = script.getData(ExperimentSet.class, () -> new ExperimentSet());
+		ExperimentSet set = script.getData(ExperimentSet.class, ExperimentSet::new);
 		set.add(experiment);
 	}
 
@@ -675,7 +675,7 @@ public final class ParserInstance implements Experimented {
 	 *  That is, the contents of any collections will remain the same, but there is no guarantee that
 	 *  the contents themselves will remain unchanged.
 	 * @see #backup()
-	 * @see #restoreBackup(Backup) 
+	 * @see #restoreBackup(Backup)
 	 */
 	public static class Backup {
 
