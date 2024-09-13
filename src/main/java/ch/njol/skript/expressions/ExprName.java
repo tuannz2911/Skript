@@ -131,7 +131,7 @@ public class ExprName extends SimplePropertyExpression<Object, String> {
 				Skript.methodExists(Bukkit.class, "createInventory", InventoryHolder.class, int.class, Component.class))
 			serializer = BungeeComponentSerializer.get();
 		HAS_GAMERULES = Skript.classExists("org.bukkit.GameRule");
-		register(ExprName.class, String.class, "(1¦name[s]|2¦(display|nick|chat|custom)[ ]name[s])", "offlineplayers/entities/blocks/bossbars/itemtypes/inventories/slots/worlds"
+		register(ExprName.class, String.class, "(1:name[s]|2:(display|nick|chat|custom)[ ]name[s])", "offlineplayers/entities/blocks/bossbars/itemtypes/inventories/slots/worlds"
 			+ (HAS_GAMERULES ? "/gamerules" : ""));
 		register(ExprName.class, String.class, "(3¦(player|tab)[ ]list name[s])", "players");
 	}
@@ -175,7 +175,7 @@ public class ExprName extends SimplePropertyExpression<Object, String> {
 			return ((Entity) object).getCustomName();
 		} else if (object instanceof BossBar bar) {
 			return bar.getTitle();
-		}else if (object instanceof Block) {
+		} else if (object instanceof Block) {
 			BlockState state = ((Block) object).getState();
 			if (state instanceof Nameable)
 				return ((Nameable) state).getCustomName();
