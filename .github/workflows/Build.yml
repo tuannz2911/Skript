@@ -21,6 +21,8 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    - name: Skript
+      run: git submodule update --init
     # Bước 3: Thực hiện build với Gradle
     - name: Build with Gradle
       run: ./gradlew clean build
