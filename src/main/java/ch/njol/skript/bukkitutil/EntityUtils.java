@@ -163,7 +163,7 @@ public class EntityUtils {
 			location.setWorld(entity.getWorld());
 		}
 
-		entity.teleport(location);
+		entity.teleportAsync(location);
 	}
 
 }
