@@ -677,7 +677,7 @@ public class SkriptClasses {
 				.usage("")
 				.examples("")
 				.since("INSERT VERSION")
-				.changer(new Changer<SkriptQueue>() {
+				.changer(new Changer<>() {
 					@Override
 					public Class<?> @Nullable [] acceptChange(ChangeMode mode) {
 						return switch (mode) {
@@ -704,7 +704,7 @@ public class SkriptClasses {
 						}
 					}
 				})
-				.serializer(new YggdrasilSerializer<SkriptQueue>())
+				.serializer(new YggdrasilSerializer<>())
 		);
 
 	}
