@@ -248,6 +248,8 @@ public class ExprElement<T> extends SimpleExpression<T> {
 
 	@Override
 	public Class<? extends T> getReturnType() {
+		if (queue)
+			return (Class<? extends T>) Object.class;
 		return expr.getReturnType();
 	}
 
