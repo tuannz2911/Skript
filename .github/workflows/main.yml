@@ -25,7 +25,7 @@ jobs:
       - name: git
         run: git submodule update --init
       - name: build
-      - run: ./gradlew clean build
+        run: ./gradlew clean build
 
 
       # Upload build artifacts
