@@ -1,5 +1,7 @@
 package ch.njol.skript;
 
+import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
+import com.tcoded.folialib.FoliaLib;
 import ch.njol.skript.aliases.Aliases;
 import ch.njol.skript.bukkitutil.BurgerHelper;
 import ch.njol.skript.classes.ClassInfo;
@@ -374,6 +376,7 @@ public final class Skript extends JavaPlugin implements Listener {
 			return;
 		}
 
+		FoliaLib foliaLib = new FoliaLib(this);
 		handleJvmArguments(); // JVM arguments
 
 		version = new Version("" + getDescription().getVersion()); // Skript version
@@ -1155,8 +1158,8 @@ public final class Skript extends JavaPlugin implements Listener {
 			beforeDisable();
 		}
 
-		Bukkit.getScheduler().cancelTasks(this);
-
+		Bukkit.getGlobalRegionScheduler().cancelTasks(this);
+		
 		for (Closeable c : closeOnDisable) {
 			try {
 				c.close();
